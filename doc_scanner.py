@@ -43,34 +43,17 @@ def getGrid(file):
                 T = threshold_local(warped, 31, offset=10, method="gaussian")
                 warped = (warped > T).astype("uint8") * 255
 
-                # cv2.imshow("Original", orig)
-                # cv2.imshow(file, image)
-                # cv2.imshow("Scanned", warped)
-                showContours(warped)
+                cv2.imshow("Original", orig)
+                cv2.imshow(file, image)
+                cv2.imshow("Scanned", warped)
+
 
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
         else:
                 print("Did not find any 4 sided contour")
 
-def showContours(image):
-        
-        # Find all contours 
-        cnts = cv2.findContours(image.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-
-        # Get the largest 5 contours
-        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
-
-        screenCnt = None
-
-        for c in cnts:
-            peri = cv2.arcLength(c, True)
-            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-            screenCnt = approx
-
-        cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
-        cv2.imshow(file, image)
-
-
-getGrid("image.jpeg")
+from pathlib import Path
+pathlist = Path("images").glob('**/*.JPG')
+for path in pathlist:
+        getGrid(str(path))
