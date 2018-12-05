@@ -1,1 +1,0 @@
-Blob detection does not get the target objects
