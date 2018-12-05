@@ -4,11 +4,6 @@ import numpy as np
 import imutils
 import cv2
 
-RED_LOWER = [140, 150, 0]
-RED_UPPER = [170, 255, 255]
-BLUE_LOWER = [100, 150, 0]
-BLUE_UPPER = [140, 255, 255]
-
 BLUE_LOWER = [102, 135, 11]
 BLUE_UPPER = [128, 183, 108]
 

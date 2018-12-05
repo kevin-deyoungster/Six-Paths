@@ -61,3 +61,6 @@ https://stackoverflow.com/questions/18194870/canny-edge-image-noise-removal
         # cv2.drawContours(image, cnts, 4, (0, 255, 0), 2)
         # cv2.imshow("Edges", edged)```
 ````
+
+HSV Color Picker for OpenCV
+https://github.com/alieldinayman/HSV-Color-Picker
