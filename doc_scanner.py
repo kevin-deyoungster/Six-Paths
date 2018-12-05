@@ -10,7 +10,10 @@ BLUE_LOWER = [100, 150, 0]
 BLUE_UPPER = [140, 255, 255]
 
 
-def highlight_color(image, lower_color, upper_color):
+def get_color_contour(image, lower_color, upper_color):
+    """
+    Returns contours of [color]
+    """
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, np.array(lower_color), np.array(upper_color))
     kernel = np.ones((9, 9), np.uint8)
@@ -20,11 +23,13 @@ def highlight_color(image, lower_color, upper_color):
     # cv2.imshow("masked", edged)
     cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-    cv2.drawContours(image, cnts, -1, (0, 255, 0), 2)
-    # cv2.imshow("Final", image)
+    return cnts
 
 
 def get_edges(image, optimal=False):
+    """
+    Returns a canny edged render of [image]
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     v = np.median(gray)
@@ -38,6 +43,9 @@ def get_edges(image, optimal=False):
 
 
 def get_quadrilateral_contour(edged_image):
+    """
+    Finds contour of the largest quadrilateral in image
+    """
     cnts = cv2.findContours(edged_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     if len(cnts) < 0:
@@ -56,23 +64,11 @@ def get_quadrilateral_contour(edged_image):
         return None, False
 
 
-def get_contours(edged_image):
-    cnts = cv2.findContours(edged_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-    if len(cnts) < 0:
-        print("No Contours Found in Image")
-        return None, False
-    else:
-        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:10]
-        return cnts, True
-
-
 def getGrid(file_path):
 
     image = cv2.imread(file_path)
     original_image = image.copy()
     edged = get_edges(image)
-    # cv2.imshow("Edged", edged)
     quadCnt, found = get_quadrilateral_contour(edged)
 
     if found:
@@ -87,16 +83,13 @@ def getGrid(file_path):
         # We'll be working with the top-down view henceforth, make that the main image
         image = top_down_image
 
-        # # Draw edges of the image
-        # edged = get_edges(image, True)
-        # cnts, found = get_contours(edged)
-        # cv2.drawContours(image, cnts, 4, (0, 255, 0), 2)
-        # cv2.imshow("Edges", edged)
-
         # Extract the colored objects (Start and Goal Positions)
-        highlight_color(image, RED_LOWER, RED_UPPER)
-        highlight_color(image, BLUE_LOWER, BLUE_UPPER)
-        cv2.imshow("Recognized Colors", image)
+        color_contoured_image = image.copy()
+        red_contour = get_color_contour(image, RED_LOWER, RED_UPPER)
+        blue_contour = get_color_contour(image, BLUE_LOWER, BLUE_UPPER)
+        cv2.drawContours(color_contoured_image, red_contour, -1, (0, 255, 0), 2)
+        cv2.drawContours(color_contoured_image, blue_contour, -1, (0, 255, 0), 2)
+        cv2.imshow("Recognized Colors", color_contoured_image)
 
         cv2.imshow("Original Image", original_image)
         cv2.waitKey(0)

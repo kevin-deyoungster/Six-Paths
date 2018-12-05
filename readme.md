@@ -52,4 +52,12 @@ for path in pathlist:
 
 Optimal Canny Edge Detection
 https://stackoverflow.com/questions/18194870/canny-edge-image-noise-removal
+```
+
+```
+ # # Draw edges of the image
+        # edged = get_edges(image, True)
+        # cnts, found = get_contours(edged)
+        # cv2.drawContours(image, cnts, 4, (0, 255, 0), 2)
+        # cv2.imshow("Edges", edged)```
 ````
