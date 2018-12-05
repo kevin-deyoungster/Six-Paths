@@ -87,8 +87,10 @@ def getGrid(file_path):
         color_contoured_image = image.copy()
         red_contour = get_color_contour(image, RED_LOWER, RED_UPPER)
         blue_contour = get_color_contour(image, BLUE_LOWER, BLUE_UPPER)
+
         cv2.drawContours(color_contoured_image, red_contour, -1, (0, 255, 0), 2)
         cv2.drawContours(color_contoured_image, blue_contour, -1, (0, 255, 0), 2)
+
         cv2.imshow("Recognized Colors", color_contoured_image)
 
         cv2.imshow("Original Image", original_image)
