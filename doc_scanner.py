@@ -20,7 +20,10 @@ def get_color_contour(image, lower_color, upper_color):
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     edged = cv2.Canny(mask, 75, 200)
-    # cv2.imshow("masked", edged)
+    cv2.imshow(f"masked-{lower_color}", mask)
+    # height, width = mask.shape
+    # print(f"Height - {height}, Width - {width}")
+    # print(mask.shape)
     cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     return cnts
