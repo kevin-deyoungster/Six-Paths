@@ -9,6 +9,12 @@ RED_UPPER = [170, 255, 255]
 BLUE_LOWER = [100, 150, 0]
 BLUE_UPPER = [140, 255, 255]
 
+BLUE_LOWER = [102, 135, 11]
+BLUE_UPPER = [128, 183, 108]
+
+RED_LOWER = [154, 72, 35]
+RED_UPPER = [177, 233, 142]
+
 
 def get_color_contour(image, lower_color, upper_color):
     """
@@ -77,7 +83,7 @@ def getGrid(file_path):
     if found:
         # Draw contour of the identified quadrilateral
         cv2.drawContours(image, [quadCnt], -1, (0, 255, 0), 2)
-        cv2.imshow("Boundary Identified", image)
+        cv2.imshow(f"Boundary Identified - {file_path}", image)
 
         # Perform Perspective Transform to create top-down-view
         top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
@@ -106,6 +112,13 @@ def getGrid(file_path):
     cv2.destroyAllWindows()
 
 
+from pathlib import Path
+
 getGrid("image2.JPG")
-# getGrid("file-3.jpeg")
+pathlist = Path("images").glob("**/*.JPG")
+for path in pathlist:
+
+    getGrid(str(path))
+
+# getGrid("file12-2.jpeg")
 # getGrid("file5-1.jpeg")
