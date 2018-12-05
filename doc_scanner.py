@@ -24,6 +24,19 @@ def highlight_color(image, lower_color, upper_color):
     # cv2.imshow("Final", image)
 
 
+def get_edges(image, optimal=False):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    v = np.median(gray)
+    sigma = 0.33
+    # ---- apply optimal Canny edge detection using the computed median----
+    lower_thresh = int(max(0, (1.0 - sigma) * v)) if optimal else 75
+    upper_thresh = int(min(255, (1.0 + sigma) * v)) if optimal else 200
+
+    edged = cv2.Canny(gray, lower_thresh, upper_thresh)
+    return edged
+
+
 def get_quadrilateral_contour(edged_image):
     cnts = cv2.findContours(edged_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
@@ -47,30 +60,21 @@ def getGrid(file_path):
 
     image = cv2.imread(file_path)
     original_image = image.copy()
-
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
-    edged = cv2.Canny(gray, 75, 200)
-    cv2.imshow("Edged", edged)
-
+    edged = get_edges(image)
+    # cv2.imshow("Edged", edged)
     quadCnt, found = get_quadrilateral_contour(edged)
 
     if found:
         cv2.drawContours(image, [quadCnt], -1, (0, 255, 0), 2)
+        cv2.imshow("Perspective", image)
 
         top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
         image = top_down_image.copy()
 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (5, 5), 0)
-        edged = cv2.Canny(gray, 75, 200)
-        cv2.imshow("Edged", edged)
+        edged = get_edges(image)
         # highlight_color(image, RED_LOWER, RED_UPPER)
         # highlight_color(image, BLUE_LOWER, BLUE_UPPER)
 
-        # T = threshold_local(warped, 31, offset=10, method="gaussian")
-        # warped = (warped > T).astype("uint8") * 255
-        cv2.imshow("Traced Image", image)
         cv2.imshow("Original Image", original_image)
         cv2.imshow("Warped", top_down_image)
 
@@ -79,6 +83,13 @@ def getGrid(file_path):
     else:
         print("Did not find any 4 sided contour")
 
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
-getGrid("file-3.jpeg")
-getGrid("image2.JPG")
+    # detect_color(str(path), BLUE_LOWER,BLUE_UPPER)
+    # detect_color(str(path), RED_LOWER,RED_UPPER)
+
+
+# getGrid("file-3.jpeg")
+# getGrid("image2.JPG")
+getGrid("file5-1.jpeg")

@@ -1,30 +1,28 @@
 Blob detection does not get the target objects
 
-# Detect Colors 
-http://answers.opencv.org/question/90047/detecting-blue-color-in-this-image/
-https://pythonprogramming.net/color-filter-python-opencv-tutorial/
+# Detect Colors
 
+http://answers.opencv.org/question/90047/detecting-blue-color-in-this-image/
+
+https://pythonprogramming.net/color-filter-python-opencv-tutorial/
 
 OpenCV uses different system for representing HSV
 https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
 
-
 https://solarianprogrammer.com/2015/05/08/detect-red-circles-image-using-opencv/
-
 
 Nice code: Colored Ball Detections
 https://pastebin.com/WVhfmphS
 
-Good HSV Color Picker 
+Good HSV Color Picker
 https://alloyui.com/examples/color-picker/hsv
 
 http://colorizer.org/
 
-
 Noise Removal
 https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python/
 
-```python
+````python
         kernel = np.ones((5, 5), np.uint8)
 
  img_erosion = cv2.erode(warped, kernel, iterations=1)
@@ -41,12 +39,17 @@ https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python/
 # pathlist = Path("images").glob('**/*.JPG')
 # for path in pathlist:
 #         getGrid(str(path))
-```
+````
 
-```python
+````python
 from pathlib import Path
 pathlist = Path("images").glob('**/*.JPG')
 for path in pathlist:
     detect_color(str(path), BLUE_LOWER,BLUE_UPPER)
     detect_color(str(path), RED_LOWER,RED_UPPER)
     ```
+
+
+Optimal Canny Edge Detection
+https://stackoverflow.com/questions/18194870/canny-edge-image-noise-removal
+````
