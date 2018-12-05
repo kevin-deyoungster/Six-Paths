@@ -1,4 +1,4 @@
-from pyimagesearch.transform import four_point_transform
+from utils.transform import four_point_transform
 from skimage.filters import threshold_local
 import numpy as np
 import imutils
@@ -61,6 +61,10 @@ def getGrid(file_path):
         top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
         image = top_down_image.copy()
 
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (5, 5), 0)
+        edged = cv2.Canny(gray, 75, 200)
+        cv2.imshow("Edged", edged)
         # highlight_color(image, RED_LOWER, RED_UPPER)
         # highlight_color(image, BLUE_LOWER, BLUE_UPPER)
 
