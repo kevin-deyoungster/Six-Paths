@@ -51,6 +51,7 @@ def getGrid(file_path):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     edged = cv2.Canny(gray, 75, 200)
+    cv2.imshow("Edged", edged)
 
     quadCnt, found = get_quadrilateral_contour(edged)
 
@@ -75,4 +76,5 @@ def getGrid(file_path):
         print("Did not find any 4 sided contour")
 
 
+getGrid("file-3.jpeg")
 getGrid("image2.JPG")
