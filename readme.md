@@ -34,3 +34,19 @@ https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python/
         cv2.imshow("Erosion", img_erosion)
         cv2.imshow("Dilation", img_dilation)
         ```
+
+```python
+
+# from pathlib import Path
+# pathlist = Path("images").glob('**/*.JPG')
+# for path in pathlist:
+#         getGrid(str(path))
+```
+
+```python
+from pathlib import Path
+pathlist = Path("images").glob('**/*.JPG')
+for path in pathlist:
+    detect_color(str(path), BLUE_LOWER,BLUE_UPPER)
+    detect_color(str(path), RED_LOWER,RED_UPPER)
+    ```
