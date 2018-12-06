@@ -201,7 +201,7 @@ def drawPath(points, img, block_size):
     cv2.destroyAllWindows()
 
 
-drawPath([(0, 0), (0, 1), (2, 2)], cv2.imread("image2.JPG"), 3)
+# drawPath([(0, 0), (0, 1), (2, 2)], cv2.imread("image2.JPG"), 3)
 # g = generate_sparse_grid()
 # set_grid_values([(1, 1), (0, 0), (2, 2)], 2, g)
 # print(g)

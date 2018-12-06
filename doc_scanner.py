@@ -82,13 +82,16 @@ def getGrid(file_path, empty_world):
 
 from pathlib import Path
 
-# getGrid("image2.JPG")
-# pathlist = Path("im-5").glob("**/*.JPG")
-pathlist = ["image2.JPG"]
+# getGrid("image2.JPG")s
+pathlist = Path("im-5").glob("**/*.JPG")
+# pathlist = ["image2.JPG"]
 for path in pathlist:
     main_grid = grid_utils.generate_sparse_grid()
     world_map, start, goal = getGrid(str(path), main_grid)
     print(world_map, f"Start: {start}", f"Goal: {goal}")
-    grid_utils.write_world_map_to_file(start[0], goal[0], world_map)
+    grid_utils.write_world_map_to_file(
+        tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
+    )
+
 # getGrid("file12-2.jpeg")
 # getGrid("file5-1.jpeg")
