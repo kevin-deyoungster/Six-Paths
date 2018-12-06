@@ -64,3 +64,13 @@ https://stackoverflow.com/questions/18194870/canny-edge-image-noise-removal
 
 HSV Color Picker for OpenCV
 https://github.com/alieldinayman/HSV-Color-Picker
+
+Drawing Grids
+https://stackoverflow.com/questions/44816682/drawing-grid-lines-across-the-image-uisng-openccv-python?rq=1
+
+Check if point in eanoh
+https://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html?highlight=pointpolygontest#pointpolygontest
+
+```
+https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
+```

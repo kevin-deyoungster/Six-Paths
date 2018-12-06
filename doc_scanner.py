@@ -110,9 +110,8 @@ def getGrid(file_path):
 from pathlib import Path
 
 getGrid("image2.JPG")
-pathlist = Path("images").glob("**/*.JPG")
+pathlist = Path("im-5").glob("**/*.JPG")
 for path in pathlist:
-
     getGrid(str(path))
 
 # getGrid("file12-2.jpeg")
