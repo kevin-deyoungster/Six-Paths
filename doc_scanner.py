@@ -12,8 +12,8 @@ BLUE_UPPER = [128, 204, 121]
 RED_LOWER = [145, 25, -5]
 RED_UPPER = [177, 233, 170]
 
-BLACK_LOWER = [-10, -10, -35]
-BLACK_UPPER = [100, 255, 40]
+BLACK_LOWER = [-10, -10, -30]
+BLACK_UPPER = [100, 255, 63]
 
 
 def getGrid(file_path, empty_world):
@@ -51,13 +51,15 @@ def getGrid(file_path, empty_world):
             image, black_contour, grid_cell_cnts
         )
 
-        grid_utils.set_grid_values(start_location, 100, empty_world)
-        grid_utils.set_grid_values(goal_location, 2, empty_world)
+        # grid_utils.set_grid_values(start_location, 100, empty_world)
+        # grid_utils.set_grid_values(goal_location, 2, empty_world)
         grid_utils.set_grid_values(obstacles_locations, 1, empty_world)
 
         print(f"Goal is in location {goal_location}")
         print(f"Start is in location {start_location}")
-        print(f"Obstacles are in locations {obstacles_locations}")
+        print(
+            f"{len(obstacles_locations)} Obstacles are in locations {obstacles_locations}"
+        )
 
         cv2.drawContours(color_contoured_image, red_contour, -1, (0, 0, 255), 2)
         cv2.drawContours(color_contoured_image, blue_contour, -1, (255, 0, 0), 2)
@@ -81,11 +83,12 @@ def getGrid(file_path, empty_world):
 from pathlib import Path
 
 # getGrid("image2.JPG")
-pathlist = Path("im-5").glob("**/*.JPG")
+# pathlist = Path("im-5").glob("**/*.JPG")
+pathlist = ["image2.JPG"]
 for path in pathlist:
     main_grid = grid_utils.generate_sparse_grid()
     world_map, start, goal = getGrid(str(path), main_grid)
-    print(world_map, start, goal)
-
+    print(world_map, f"Start: {start}", f"Goal: {goal}")
+    grid_utils.write_world_map_to_file(start[0], goal[0], world_map)
 # getGrid("file12-2.jpeg")
 # getGrid("file5-1.jpeg")

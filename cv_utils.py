@@ -39,6 +39,8 @@ def get_quadrilateral_contour(edged_image):
                 print("Found contour with 4 sides")
                 return approx, True
         return None, False
+
+
 def get_color_contour(image, lower_color, upper_color):
     """
     Returns contours of [color]
@@ -49,7 +51,7 @@ def get_color_contour(image, lower_color, upper_color):
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     edged = cv2.Canny(mask, 75, 200)
-    cv2.imshow(f"masked-{lower_color}", mask)
+    # cv2.imshow(f"masked-{lower_color}", mask)
     # height, width = mask.shape
     # print(f"Height - {height}, Width - {width}")
     # print(mask.shape)
