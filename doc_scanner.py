@@ -4,11 +4,121 @@ import numpy as np
 import imutils
 import cv2
 
-BLUE_LOWER = [102, 135, 11]
-BLUE_UPPER = [128, 183, 108]
+BLUE_LOWER = [102, 120, -15]
+BLUE_UPPER = [128, 204, 121]
 
-RED_LOWER = [154, 72, 35]
-RED_UPPER = [177, 233, 142]
+RED_LOWER = [145, 25, -5]
+RED_UPPER = [177, 233, 170]
+
+BLACK_LOWER = [-10, -10, -35]
+BLACK_UPPER = [30, 100, 65]
+
+
+def draw_grid(img, parts=3, color=(0, 255, 0), sub_color=(255, 0, 0)):
+    """
+    Draws grid lines on image and returns contours of the grid cells
+    """
+    height = img.shape[0]
+    width = img.shape[1]
+
+    # Draw Vertical Lines
+    cv2.line(img, (int(0.33 * width), 0), (int(0.33 * width), height), color, 2, 1)
+    cv2.line(img, (int(0.67 * width), 0), (int(0.67 * width), height), color, 2, 1)
+
+    # Draw Horizontal Lines
+    cv2.line(img, (0, int(0.33 * height)), (width, int(0.33 * height)), color, 2, 1)
+    cv2.line(img, (0, int(0.67 * height)), (width, int(0.67 * height)), color, 2, 1)
+
+    # Draw the 9 cells
+    contours = [
+        np.array(
+            [
+                [0, 0],
+                [int(0.33 * width), 0],
+                [int(0.33 * width), int(0.33 * height)],
+                [0, int(0.33 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.33 * width), 0],
+                [int(0.67 * width), 0],
+                [int(0.67 * width), int(0.33 * height)],
+                [int(0.33 * width), int(0.33 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.67 * width), 0],
+                [width, 0],
+                [width, int(0.33 * height)],
+                [int(0.67 * width), int(0.33 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [0, int(0.33 * height)],
+                [int(0.33 * width), int(0.33 * height)],
+                [int(0.33 * width), int(0.67 * height)],
+                [0, int(0.67 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.33 * width), int(0.33 * height)],
+                [int(0.67 * width), int(0.33 * height)],
+                [int(0.67 * width), int(0.67 * height)],
+                [int(0.33 * width), int(0.67 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.67 * width), int(0.33 * height)],
+                [int(width), int(0.33 * height)],
+                [int(width), int(0.67 * height)],
+                [int(0.67 * width), int(0.67 * height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [0, int(0.67 * height)],
+                [int(0.33 * width), int(0.67 * height)],
+                [int(0.33 * width), int(height)],
+                [0, int(height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.33 * width), int(0.67 * height)],
+                [int(0.67 * width), int(0.67 * height)],
+                [int(0.67 * width), int(height)],
+                [int(0.33 * width), int(height)],
+            ],
+            dtype=np.int32,
+        ),
+        np.array(
+            [
+                [int(0.67 * width), int(0.67 * height)],
+                [int(width), int(0.67 * height)],
+                [int(width), int(height)],
+                [int(0.67 * width), int(height)],
+            ],
+            dtype=np.int32,
+        ),
+    ]
+
+    cv2.drawContours(img, contours, -1, sub_color, 2)
+    # cv2.imshow("lined", img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    return contours
 
 
 def get_color_contour(image, lower_color, upper_color):
@@ -91,9 +201,11 @@ def getGrid(file_path):
         color_contoured_image = image.copy()
         red_contour = get_color_contour(image, RED_LOWER, RED_UPPER)
         blue_contour = get_color_contour(image, BLUE_LOWER, BLUE_UPPER)
-
+        black_contour = get_color_contour(image, BLACK_LOWER, BLACK_UPPER)
+        draw_grid(color_contoured_image)
         cv2.drawContours(color_contoured_image, red_contour, -1, (0, 255, 0), 2)
         cv2.drawContours(color_contoured_image, blue_contour, -1, (0, 255, 0), 2)
+        cv2.drawContours(color_contoured_image, black_contour, -1, (0, 255, 0), 2)
 
         cv2.imshow("Recognized Colors", color_contoured_image)
 
@@ -109,7 +221,7 @@ def getGrid(file_path):
 
 from pathlib import Path
 
-getGrid("image2.JPG")
+# getGrid("image2.JPG")
 pathlist = Path("im-5").glob("**/*.JPG")
 for path in pathlist:
     getGrid(str(path))
