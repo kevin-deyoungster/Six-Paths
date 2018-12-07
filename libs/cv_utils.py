@@ -3,9 +3,9 @@ import imutils
 import cv2
 
 
-def get_edges(image, optimal=False):
+def get_edges(image):
     """
-    Returns a canny edged image
+    Returns image showing edges
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -15,26 +15,37 @@ def get_edges(image, optimal=False):
     return edged
 
 
-def get_quadrilateral_contour(edged_image):
+def _get_contours(edged_image):
     """
-    Finds contour of the largest quadrilateral in image
+    Returns contours in edged_image
     """
     cnts = cv2.findContours(edged_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     if len(cnts) < 0:
-        print("No Contours Found in Image")
-        return None, False
-    else:
-        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
+        return None
+    return cnts
 
-        # Get Approximate estimate of contour
-        for c in cnts:
-            peri = cv2.arcLength(c, True)
-            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-            if len(approx) == 4:
-                print("Found contour with 4 sides")
-                return approx, True
-        return None, False
+
+def get_quadrilateral_contour2(edged_image):
+    
+    # Dilate Image (to connect loose ends) and get contours
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    dilated = cv2.dilate(edged_image, kernel)
+    contours = _get_contours(dilated)
+
+    # Get 5 largest contours
+    sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    largest_contours = sorted_contours[:5]
+
+    for contour in largest_contours:
+
+        # Trace contour and check if number of 'corners' is 4
+        perimeter = cv2.arcLength(contour, True)
+        approximage_contour = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+
+        if len(approximage_contour) == 4:
+            return approximage_contour
+    return None
 
 
 def get_color_contour(image, lower_color, upper_color):

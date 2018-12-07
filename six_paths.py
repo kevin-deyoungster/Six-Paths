@@ -1,7 +1,6 @@
-import cv2
-import imutils
-import numpy as np
 from pathlib import Path
+import cv2
+import numpy as np
 
 from libs import cv_utils
 from libs import grid_utils
@@ -20,22 +19,26 @@ BLACK_UPPER = [100, 255, 63]
 def getGrid(image_file):
 
     empty_world = grid_utils.generate_sparse_grid()
-
     original_image = cv2.imread(image_file)
+
     image = original_image.copy()
 
-    edged = cv_utils.get_edges(image)
-    cv2.imshow("Edged", edged)
-    quadCnt, found = cv_utils.get_quadrilateral_contour(edged)
+    # Perform Edge Detection (using Canny-Edge)
+    edged_image = cv_utils.get_edges(image)
 
-    if found:
+    # Get Largest Quadrilateral Contour (the field)
+    # quadCnt, found = cv_utils.get_quadrilateral_contour(edged_image)
+
+    quadCnt = cv_utils.get_quadrilateral_contour2(edged_image)
+
+    if np.all(quadCnt):
         # Draw contour of the identified quadrilateral
         cv2.drawContours(image, [quadCnt], -1, (0, 255, 0), 2)
-        cv2.imshow(f"Boundary Identified - {image_file}", image)
+        # cv2.imshow(f"Boundary Identified - {image_file}", image)
 
         # Perform Perspective Transform to create top-down-view
         top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
-        cv2.imshow("Perspective Transform", top_down_image)
+        # cv2.imshow("Perspective Transform", top_down_image)
 
         # We'll be working with the top-down view henceforth, make that the main image
         image = top_down_image
@@ -72,12 +75,11 @@ def getGrid(image_file):
 
         cv2.imshow("Recognized Colors", color_contoured_image)
 
-        cv2.imshow("Original Image", original_image)
+        # cv2.imshow("Original Image", original_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
         return empty_world, start_location, goal_location
-        return "Fish"
     else:
         print("Did not find any 4 sided contour")
         return None
@@ -86,19 +88,19 @@ def getGrid(image_file):
     cv2.destroyAllWindows()
 
 
-# pathlist = ["s.png"]
+# pathlist = ["images/file1-3.jpeg"]
 pathlist = Path("images").glob("**/*.JPG")
 for path in pathlist:
-    try:
-        stuff = getGrid(str(path))
+    # try:
+    stuff = getGrid(str(path))
 
-        if stuff != None:
-            world_map, start, goal = stuff
-            if len(start) > 0:
-                print(world_map, f"Start: {start}", f"Goal: {goal}")
+    if stuff != None:
+        world_map, start, goal = stuff
+        if len(start) > 0:
+            print(world_map, f"Start: {start}", f"Goal: {goal}")
 
-                grid_utils.write_world_map_to_file(
-                    tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
-                )
-    except:
-        print("Oops something bad happened")
+            grid_utils.write_world_map_to_file(
+                tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
+            )
+    # except:
+        # print("Oops something bad happened")

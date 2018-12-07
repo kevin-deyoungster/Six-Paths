@@ -8,6 +8,7 @@ pip install -r requirements.txt
 
 # External Tools Used
 
+-   Python 3.7
 -   @alieldinayman's [HSV Color Picker Tool](https://github.com/alieldinayman/HSV-Color-Picker) to extract the necessary color ranges of our objects
 
 What Worked?
@@ -15,6 +16,10 @@ What Worked?
 What Didn't Work?
 
 Blob detection does not get the target objects
+
+# Connecting edges from canny edge with dilation
+
+https://stackoverflow.com/questions/43009923/how-to-complete-close-a-contour-in-python-opencv
 
 # Detect Colors
 
