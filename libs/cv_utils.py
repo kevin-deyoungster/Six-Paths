@@ -5,13 +5,18 @@ import cv2
 
 def get_edges(image):
     """
-    Returns image showing edges
+    Returns dilated image of edges
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     lower_thresh = 75
     upper_thresh = 200
     edged = cv2.Canny(gray, lower_thresh, upper_thresh)
+
+    # Dilate Image (to connect loose ends) and get contours
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    edged = cv2.dilate(edged, kernel)
+
     return edged
 
 
@@ -26,12 +31,11 @@ def _get_contours(edged_image):
     return cnts
 
 
-def get_quadrilateral_contour2(edged_image):
-    
-    # Dilate Image (to connect loose ends) and get contours
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    dilated = cv2.dilate(edged_image, kernel)
-    contours = _get_contours(dilated)
+def get_quadrilateral_contour(edged_image):
+    """
+    Returns contour of largest quadrilateral in [edged_image]
+    """
+    contours = _get_contours(edged_image)
 
     # Get 5 largest contours
     sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
@@ -48,7 +52,7 @@ def get_quadrilateral_contour2(edged_image):
     return None
 
 
-def get_color_contour(image, lower_color, upper_color):
+def get_contours_of_color(image, lower_color, upper_color):
     """
     Returns contours of [color]
     """
@@ -58,13 +62,8 @@ def get_color_contour(image, lower_color, upper_color):
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     edged = cv2.Canny(mask, 75, 200)
-    cv2.imshow(f"masked-{lower_color}", mask)
-    # height, width = mask.shape
-    # print(f"Height - {height}, Width - {width}")
-    # print(mask.shape)
-    cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = cnts[0] if imutils.is_cv2() else cnts[1]
-    return cnts
+    # cv2.imshow(f"masked-{lower_color}", mask)
+    return _get_contours(edged)
 
 
 def draw_grid(img, parts=3, color=(0, 255, 0), sub_color=(255, 0, 0)):

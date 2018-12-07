@@ -1,5 +1,7 @@
 from pathlib import Path
 import cv2
+import imutils
+
 import numpy as np
 
 from libs import cv_utils
@@ -15,43 +17,45 @@ RED_UPPER = [177, 233, 170]
 BLACK_LOWER = [-10, -10, -30]
 BLACK_UPPER = [100, 255, 63]
 
+COLOR_GREEN = (0, 255, 0)
+COLOR_BLUE =  (255, 0, 0)
+COLOR_RED = (0, 0, 255)
+COLOR_WHITE = (255,255,255)
 
 def getGrid(image_file):
 
     empty_world = grid_utils.generate_sparse_grid()
+    
     original_image = cv2.imread(image_file)
-
     image = original_image.copy()
 
     # Perform Edge Detection (using Canny-Edge)
     edged_image = cv_utils.get_edges(image)
+    cv2.imshow("Identified Edges", edged_image)
 
     # Get Largest Quadrilateral Contour (the field)
-    # quadCnt, found = cv_utils.get_quadrilateral_contour(edged_image)
+    quad_contour = cv_utils.get_quadrilateral_contour(edged_image)
 
-    quadCnt = cv_utils.get_quadrilateral_contour2(edged_image)
+    if np.all(quad_contour):
 
-    if np.all(quadCnt):
         # Draw contour of the identified quadrilateral
-        cv2.drawContours(image, [quadCnt], -1, (0, 255, 0), 2)
-        # cv2.imshow(f"Boundary Identified - {image_file}", image)
+        cv2.drawContours(image, [quad_contour], -1, COLOR_GREEN, 2)
+        cv2.imshow("Identified Field", image)
 
         # Perform Perspective Transform to create top-down-view
-        top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
-        # cv2.imshow("Perspective Transform", top_down_image)
+        top_down_image = four_point_transform(image, quad_contour.reshape(4, 2))
+        top_down_image = imutils.resize(top_down_image, width=image.shape[1], height=image.shape[0])
+        cv2.imshow("Top-Down View", top_down_image)
 
-        # We'll be working with the top-down view henceforth, make that the main image
+        # Top Down Image is now the current working image
         image = top_down_image
 
-        # Extract the colored objects (Start and Goal Positions)
-        color_contoured_image = image.copy()
-        red_contour = cv_utils.get_color_contour(image, RED_LOWER, RED_UPPER)
-        blue_contour = cv_utils.get_color_contour(image, BLUE_LOWER, BLUE_UPPER)
-        black_contour = cv_utils.get_color_contour(image, BLACK_LOWER, BLACK_UPPER)
+        # Extract the colored objects (Start & Goal Positions, Obstacles)
+        red_contour = cv_utils.get_contours_of_color(image, RED_LOWER, RED_UPPER)
+        blue_contour = cv_utils.get_contours_of_color(image, BLUE_LOWER, BLUE_UPPER)
+        black_contour = cv_utils.get_contours_of_color(image, BLACK_LOWER, BLACK_UPPER)
 
-        grid_cell_cnts = cv_utils.draw_grid(
-            color_contoured_image, 3, (255, 255, 255), (255, 255, 255)
-        )
+        grid_cell_cnts = cv_utils.draw_grid(image, 3, COLOR_WHITE, COLOR_WHITE)
 
         start_location = grid_utils.get_locations(image, blue_contour, grid_cell_cnts)
         goal_location = grid_utils.get_locations(image, red_contour, grid_cell_cnts)
@@ -69,13 +73,13 @@ def getGrid(image_file):
             f"{len(obstacles_locations)} Obstacles are in locations {obstacles_locations}"
         )
 
-        cv2.drawContours(color_contoured_image, red_contour, -1, (0, 0, 255), 2)
-        cv2.drawContours(color_contoured_image, blue_contour, -1, (255, 0, 0), 2)
-        cv2.drawContours(color_contoured_image, black_contour, -1, (0, 255, 0), 2)
+        cv2.drawContours(image, red_contour, -1, COLOR_RED, 2)
+        cv2.drawContours(image, blue_contour, -1,  COLOR_BLUE, 2)
+        cv2.drawContours(image, black_contour, -1, COLOR_GREEN, 2)
 
-        cv2.imshow("Recognized Colors", color_contoured_image)
+        cv2.imshow("Recognized Colors", image)
 
-        # cv2.imshow("Original Image", original_image)
+        cv2.imshow(f"Original Image - {image_file}", original_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
@@ -103,4 +107,4 @@ for path in pathlist:
                 tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
             )
     # except:
-        # print("Oops something bad happened")
+    # print("Oops something bad happened")
