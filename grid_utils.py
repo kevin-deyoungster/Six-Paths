@@ -58,7 +58,7 @@ def set_grid_values(locations, value, grid):
 
 
 def write_world_map_to_file(startPos, endPos, worldMap):
-    text = f"#!/usr/bin/env python3\ntestStartPos={startPos}\ntestStartOrientation=3\ntestEnd={endPos}\nrow_world_map={worldMap}"
+    text = f"#!/usr/bin/env python3\ntestStartPos={startPos}\ntestStartOrientation=3\ntestEnd={endPos}\nraw_world_map={worldMap}"
     with open("planning_map.py", "w") as f:
         f.write(text)
     st = os.stat("planning_map.py")
