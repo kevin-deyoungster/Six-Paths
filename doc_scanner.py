@@ -21,6 +21,7 @@ def getGrid(file_path, empty_world):
     image = cv2.imread(file_path)
     original_image = image.copy()
     edged = cv_utils.get_edges(image)
+    cv2.imshow("Edged", edged)
     quadCnt, found = cv_utils.get_quadrilateral_contour(edged)
 
     if found:
