@@ -1,10 +1,10 @@
-from utils.transform import four_point_transform
-from skimage.filters import threshold_local
-import numpy as np
-import imutils
-import cv_utils
-import grid_utils
 import cv2
+import imutils
+import numpy as np
+
+from libs import cv_utils
+from libs import grid_utils
+from libs.p_transform import four_point_transform
 
 BLUE_LOWER = [102, 120, -15]
 BLUE_UPPER = [128, 204, 121]
@@ -83,28 +83,20 @@ def getGrid(file_path, empty_world):
 
 from pathlib import Path
 
-# getGrid("image2.JPG")s
-pathlist = Path("im-5").glob("**/*.JPG")
+pathlist = Path("images").glob("**/*.JPG")
 # pathlist = ["image2.JPG"]
 for path in pathlist:
     main_grid = grid_utils.generate_sparse_grid()
     try:
-        stuff  = getGrid(str(path), main_grid)
-        
+        stuff = getGrid(str(path), main_grid)
+
         if stuff != None:
             world_map, start, goal = stuff
             if len(start) > 0:
                 print(world_map, f"Start: {start}", f"Goal: {goal}")
-
-
 
                 grid_utils.write_world_map_to_file(
                     tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
                 )
     except:
         print("Oops something bad happened")
-            
-    
-
-# getGrid("file12-2.jpeg")
-# getGrid("file5-1.jpeg")

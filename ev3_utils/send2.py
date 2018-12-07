@@ -10,7 +10,7 @@ def send():
 
 
 def run():
-    ssh = paramiko.SSHClient()
+    ssh = paramiko.SSHClient()  
     ssh.load_system_host_keys()
     ssh.connect("192.168.0.1", username="robot", password="maker")
     commandstring = "python3 movement.py"
@@ -29,7 +29,6 @@ def send_map_and_run(host="192.168.0.1", username="robot", password="maker", map
     ssh.exec_command(commandstring)
 
 
-# send_map_and_run(navigator_file_name="movement.py", map_file_path="planning_map.py")
 
 send()
 run()

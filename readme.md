@@ -1,3 +1,15 @@
+# Install Instructions
+
+1. Run this to install dependencies
+
+```
+pip install -r requirements.txt
+```
+
+# External Tools Used
+
+-   @alieldinayman's [HSV Color Picker Tool](https://github.com/alieldinayman/HSV-Color-Picker) to extract the necessary color ranges of our objects
+
 What Worked?
 
 What Didn't Work?
