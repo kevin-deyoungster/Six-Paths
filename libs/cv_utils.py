@@ -5,16 +5,12 @@ import cv2
 
 def get_edges(image, optimal=False):
     """
-    Returns a canny edged render of [image]
+    Returns a canny edged image
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
-    v = np.median(gray)
-    sigma = 0.33
-    # ---- apply optimal Canny edge detection using the computed median----
-    lower_thresh = int(max(0, (1.0 - sigma) * v)) if optimal else 75
-    upper_thresh = int(min(255, (1.0 + sigma) * v)) if optimal else 200
-
+    lower_thresh = 75
+    upper_thresh = 200
     edged = cv2.Canny(gray, lower_thresh, upper_thresh)
     return edged
 

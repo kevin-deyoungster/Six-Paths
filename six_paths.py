@@ -1,6 +1,7 @@
 import cv2
 import imutils
 import numpy as np
+from pathlib import Path
 
 from libs import cv_utils
 from libs import grid_utils
@@ -16,10 +17,13 @@ BLACK_LOWER = [-10, -10, -30]
 BLACK_UPPER = [100, 255, 63]
 
 
-def getGrid(file_path, empty_world):
+def getGrid(image_file):
 
-    image = cv2.imread(file_path)
-    original_image = image.copy()
+    empty_world = grid_utils.generate_sparse_grid()
+
+    original_image = cv2.imread(image_file)
+    image = original_image.copy()
+
     edged = cv_utils.get_edges(image)
     cv2.imshow("Edged", edged)
     quadCnt, found = cv_utils.get_quadrilateral_contour(edged)
@@ -27,7 +31,7 @@ def getGrid(file_path, empty_world):
     if found:
         # Draw contour of the identified quadrilateral
         cv2.drawContours(image, [quadCnt], -1, (0, 255, 0), 2)
-        cv2.imshow(f"Boundary Identified - {file_path}", image)
+        cv2.imshow(f"Boundary Identified - {image_file}", image)
 
         # Perform Perspective Transform to create top-down-view
         top_down_image = four_point_transform(original_image, quadCnt.reshape(4, 2))
@@ -73,6 +77,7 @@ def getGrid(file_path, empty_world):
         cv2.destroyAllWindows()
 
         return empty_world, start_location, goal_location
+        return "Fish"
     else:
         print("Did not find any 4 sided contour")
         return None
@@ -81,14 +86,11 @@ def getGrid(file_path, empty_world):
     cv2.destroyAllWindows()
 
 
-from pathlib import Path
-
+# pathlist = ["s.png"]
 pathlist = Path("images").glob("**/*.JPG")
-# pathlist = ["image2.JPG"]
 for path in pathlist:
-    main_grid = grid_utils.generate_sparse_grid()
     try:
-        stuff = getGrid(str(path), main_grid)
+        stuff = getGrid(str(path))
 
         if stuff != None:
             world_map, start, goal = stuff
