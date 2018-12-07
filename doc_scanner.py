@@ -88,11 +88,23 @@ pathlist = Path("im-5").glob("**/*.JPG")
 # pathlist = ["image2.JPG"]
 for path in pathlist:
     main_grid = grid_utils.generate_sparse_grid()
-    world_map, start, goal = getGrid(str(path), main_grid)
-    print(world_map, f"Start: {start}", f"Goal: {goal}")
-    grid_utils.write_world_map_to_file(
-        tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
-    )
+    try:
+        stuff  = getGrid(str(path), main_grid)
+        
+        if stuff != None:
+            world_map, start, goal = stuff
+            if len(start) > 0:
+                print(world_map, f"Start: {start}", f"Goal: {goal}")
+
+
+
+                grid_utils.write_world_map_to_file(
+                    tuple(np.flip(start[0])), tuple(np.flip(goal[0])), world_map
+                )
+    except:
+        print("Oops something bad happened")
+            
+    
 
 # getGrid("file12-2.jpeg")
 # getGrid("file5-1.jpeg")
