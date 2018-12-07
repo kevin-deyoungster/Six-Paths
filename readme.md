@@ -87,3 +87,7 @@ https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
 ```Detect Red Cirlces in an Image
 https://solarianprogrammer.com/2015/05/08/detect-red-circles-image-using-opencv/
 ```
+
+```
+Sending file to the EV3
+```
