@@ -1,207 +1,143 @@
-import cv2
 import os
 import stat
 import numpy as np
-
-location_dict = {
-    1: (0, 0),
-    2: (1, 0),
-    3: (2, 0),
-    4: (0, 1),
-    5: (1, 1),
-    6: (2, 1),
-    7: (0, 2),
-    8: (1, 2),
-    9: (2, 2),
-}
-
-
-def get_location_of_point_in_grid(point, grid_cells_contours):
-    location = None
-    for index, cell in enumerate(grid_cells_contours):
-        inside = cv2.pointPolygonTest(cell, point, False) == 1.0
-        if inside:
-            location = index + 1
-            break
-        # else:
-        #     print(f"Object is NOT in cell {index+1}")
-    return location
-
-
-def get_locations(img, object_cnts, grid_cell_cnts):
-    already_done = []
-    locations = []
-    for cnt in object_cnts:
-        # Get center point of contour
-        M = cv2.moments(cnt)
-        cx = int(M["m10"] / M["m00"])
-        cy = int(M["m01"] / M["m00"])
-        center_point = (cx, cy)
-
-        if center_point not in already_done:
-            cell_location = get_location_of_point_in_grid(center_point, grid_cell_cnts)
-            if cell_location:
-                already_done.append(center_point)
-                locations.append(location_dict[cell_location])
-
-    return locations
+import cv2
+from libs import cv_utils
 
 
 def create_new_grid(row,col):
     return np.zeros([row,col])
-
-
+       
 def set_grid_values(locations, value, grid):
     for location in locations:
-        grid[location[1]][location[0]] = value
-
+        grid[location[0]][location[1]] = value
 
 def write_world_map_to_file(startPos, endPos, worldMap):
-    text = f"#!/usr/bin/env python3\ntestStartPos={startPos}\ntestStartOrientation=3\ntestEnd={endPos}\nraw_world_map={worldMap}"
+    text = f"#!/usr/bin/env python3\ntestStartPos={startPos}\ntestStartOrientation=3\ntestEnd={endPos}\nraw_world_map={worldMap.astype(int).tolist()}"
     with open("planning_map.py", "w") as f:
         f.write(text)
     st = os.stat("planning_map.py")
     os.chmod("planning_map.py", st.st_mode | stat.S_IEXEC)
 
-
-def draw_grid(img, parts=3, color=(0, 255, 0), sub_color=(255, 0, 0)):
-    """
-    Draws grid lines on image and returns contours of the grid cells
-    """
-    height = img.shape[0]
-    width = img.shape[1]
-
-    # Draw Vertical Lines
-    cv2.line(img, (int(0.33 * width), 0), (int(0.33 * width), height), color, 2, 1)
-    cv2.line(img, (int(0.67 * width), 0), (int(0.67 * width), height), color, 2, 1)
-
-    # Draw Horizontal Lines
-    cv2.line(img, (0, int(0.33 * height)), (width, int(0.33 * height)), color, 2, 1)
-    cv2.line(img, (0, int(0.67 * height)), (width, int(0.67 * height)), color, 2, 1)
-
-    # Draw the 9 cells
-    contours = [
-        np.array(
-            [
-                [0, 0],
-                [int(0.33 * width), 0],
-                [int(0.33 * width), int(0.33 * height)],
-                [0, int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), 0],
-                [int(0.67 * width), 0],
-                [int(0.67 * width), int(0.33 * height)],
-                [int(0.33 * width), int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), 0],
-                [width, 0],
-                [width, int(0.33 * height)],
-                [int(0.67 * width), int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [0, int(0.33 * height)],
-                [int(0.33 * width), int(0.33 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-                [0, int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), int(0.33 * height)],
-                [int(0.67 * width), int(0.33 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), int(0.33 * height)],
-                [int(width), int(0.33 * height)],
-                [int(width), int(0.67 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [0, int(0.67 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-                [int(0.33 * width), int(height)],
-                [0, int(height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), int(0.67 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-                [int(0.67 * width), int(height)],
-                [int(0.33 * width), int(height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), int(0.67 * height)],
-                [int(width), int(0.67 * height)],
-                [int(width), int(height)],
-                [int(0.67 * width), int(height)],
-            ],
-            dtype=np.int32,
-        ),
-    ]
-
-    cv2.drawContours(img, contours, -1, sub_color, 2)
-    # cv2.imshow("lined", img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    return contours
+def get_lines(row_size, column_size, image):
+    return _get_lines(row_size, column_size, image.shape[1], image.shape[0])
 
 
-def drawPath(points, img, block_size):
-    grid_cell_cnts = draw_grid(img, 3, (255, 255, 255), (255, 255, 255))
-    width_block = img.shape[1]
-    height_block = img.shape[0]
+def _get_lines(row_size, column_size, width, height):
+    step_w = int(width / row_size)
+    step_h = int(height / column_size)
+    vertical_lines = []
+    horizontal_lines = []
 
-    w_unit = int(width_block / block_size)
-    h_unit = int(height_block / block_size)
+    vertical_marker = (0, 0)
+    horizontal_marker = (0, 0)
 
-    first = points[0]
-    start = (int((first[0] + 1) * w_unit / 2), int(((first[1] + 1) * h_unit) / 2))
-    end = None
+    for i in range(row_size - 1):
+        top_marker = (vertical_marker[0], vertical_marker[1] + step_w)
+        bottom_marker = (height, top_marker[1])
+        # print(f"Vertical Line from {top_marker} to {bottom_marker}")
+        vertical_marker = top_marker
+        vertical_lines.append((top_marker, bottom_marker))
 
-    colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-    for index, point in enumerate(points[1:]):
-        end = (int((point[0] + 1) * w_unit / 2), int((point[1] + 1) * h_unit / 2) * 2)
-        print(start, "to", end)
-        # end = point
-        cv2.line(img, start, end, colors[index], 2, 1)
+    for i in range(column_size - 1):
+        left_marker = (horizontal_marker[0] + step_h, horizontal_marker[1])
+        right_marker = (left_marker[0], width)
+        # print(f"Horizontal Line from {left_marker} to {right_marker}")
+        horizontal_marker = left_marker
+        horizontal_lines.append((left_marker, right_marker))
 
-        start = end
-    # cv2.line(img, (0, 0), (160, 106), (255, 0, 0), 2, 1)
-    # cv2.line(img, (160, 106), (320, 107), (0, 255, 0), 2, 1)
-    # cv2.line(img, (320, 107), (480, 108), (0, 0, 255), 2, 1)
-
-    cv2.imshow("Image", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return vertical_lines, horizontal_lines
 
 
-# drawPath([(0, 0), (0, 1), (2, 2)], cv2.imread("image2.JPG"), 3)
-# g = generate_sparse_grid()
-# set_grid_values([(1, 1), (0, 0), (2, 2)], 2, g)
-# print(g)
+def draw_lines(image, lines):
+    for line in lines:
+        line_coordinates = np.flip(line)
+        cv2.line(
+            image,
+            tuple(line_coordinates[0]),
+            tuple(line_coordinates[1]),
+            (0, 255, 0),
+            1,
+            1,
+        )
 
+
+def draw_grid(image, horizontal, vertical):
+    draw_lines(image, horizontal)
+    draw_lines(image, vertical)
+
+
+def get_cell_contours_and_coords(row_size, column_size, image):
+    return _get_cells(row_size, column_size, image.shape[1], image.shape[0])
+
+
+def _get_cells(row_size, column_size, width, height):
+    step_w = int(width / row_size)
+    step_h = int(height / column_size)
+
+    cells_corner_points = []
+    cell_coordinates = []
+
+    marker = (0, 0)
+    for i in range(row_size):
+        botttom_left = None
+        for j in range(column_size):
+            # print(i, j)
+            cell_top_left = marker
+            cell_top_right = (cell_top_left[0], cell_top_left[1] + step_w)
+            cell_bottom_right = (cell_top_left[0] + step_h, cell_top_left[1] + step_w)
+            cell_bottom_left = (cell_top_left[0] + step_h, cell_top_left[1])
+
+            # Set bottom left to bottom left of the first cell
+            botttom_left = cell_bottom_left if botttom_left is None else botttom_left
+            # print(
+            #     f"Cell {i}-{j}: {[cell_top_left, cell_top_right, cell_bottom_right, cell_bottom_left]}"
+            # )
+            if j == column_size - 1:
+                # At the end of the row, move top left marker down far left
+                marker = botttom_left
+            else:
+                # Move the marker to the right
+                marker = cell_top_right
+
+            cells_corner_points.append(
+                np.array(
+                    [cell_top_left, cell_top_right, cell_bottom_right, cell_bottom_left]
+                )
+            )
+            cell_coordinates.append((i, j))
+    return cells_corner_points, cell_coordinates
+
+
+def get_locations(image, object_contours, grid_cells, grid_cell_coords):
+    grid_cells = grid_cells.copy()
+    grid_cell_coords = grid_cell_coords.copy()
+    coords = []
+    already_seen_center_points = []
+    for contour in object_contours:
+        found_grid_cell_index = None
+        center_point = cv_utils.get_center_point_of_contour(contour)
+        if center_point not in already_seen_center_points:
+            for index, grid_cell in enumerate(grid_cells):
+                if cv_utils.is_point_in_contour(center_point, grid_cell):
+                    coords.append(grid_cell_coords[index])
+                    found_grid_cell_index = index
+                    break
+        if found_grid_cell_index:
+            del grid_cells[found_grid_cell_index]
+            del grid_cell_coords[found_grid_cell_index]
+        already_seen_center_points.append(center_point)
+    return coords if coords else None
+
+
+# image = cv2.imread("IMG-8897.JPG")
+# v_lines, h_lines = get_lines(3, 3, image.shape[1], image.shape[0])
+
+# grid_cells, coords = get_cells(3, 3, image.shape[1], image.shape[0])
+# print(coords)
+
+# draw_grid(image, h_lines, v_lines)
+
+# cv2.imshow("Something", image)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()

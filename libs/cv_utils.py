@@ -51,7 +51,7 @@ def get_center_point_of_contour(contour):
     M = cv2.moments(contour)
     cX = int(M["m10"] / M["m00"])
     cY = int(M["m01"] / M["m00"])
-    return (cX, cY)
+    return (cY, cX)
 
 def is_point_in_contour(point, contour):
     return cv2.pointPolygonTest(contour, point, False) == 1.0
@@ -68,108 +68,3 @@ def get_contours_of_color(image, lower_color, upper_color):
     edged = cv2.Canny(mask, 75, 200)
     # cv2.imshow(f"masked-{lower_color}", mask)
     return _get_contours(edged)
-
-
-def draw_grid(img, parts=3, color=(0, 255, 0), sub_color=(255, 0, 0)):
-    """
-    Draws grid lines on image and returns contours of the grid cells
-    """
-    height = img.shape[0]
-    width = img.shape[1]
-
-    # Draw Vertical Lines
-    cv2.line(img, (int(0.33 * width), 0), (int(0.33 * width), height), color, 2, 1)
-    cv2.line(img, (int(0.67 * width), 0), (int(0.67 * width), height), color, 2, 1)
-
-    # Draw Horizontal Lines
-    cv2.line(img, (0, int(0.33 * height)), (width, int(0.33 * height)), color, 2, 1)
-    cv2.line(img, (0, int(0.67 * height)), (width, int(0.67 * height)), color, 2, 1)
-
-    # Draw the 9 cells
-    contours = [
-        np.array(
-            [
-                [0, 0],
-                [int(0.33 * width), 0],
-                [int(0.33 * width), int(0.33 * height)],
-                [0, int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), 0],
-                [int(0.67 * width), 0],
-                [int(0.67 * width), int(0.33 * height)],
-                [int(0.33 * width), int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), 0],
-                [width, 0],
-                [width, int(0.33 * height)],
-                [int(0.67 * width), int(0.33 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [0, int(0.33 * height)],
-                [int(0.33 * width), int(0.33 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-                [0, int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), int(0.33 * height)],
-                [int(0.67 * width), int(0.33 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), int(0.33 * height)],
-                [int(width), int(0.33 * height)],
-                [int(width), int(0.67 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [0, int(0.67 * height)],
-                [int(0.33 * width), int(0.67 * height)],
-                [int(0.33 * width), int(height)],
-                [0, int(height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.33 * width), int(0.67 * height)],
-                [int(0.67 * width), int(0.67 * height)],
-                [int(0.67 * width), int(height)],
-                [int(0.33 * width), int(height)],
-            ],
-            dtype=np.int32,
-        ),
-        np.array(
-            [
-                [int(0.67 * width), int(0.67 * height)],
-                [int(width), int(0.67 * height)],
-                [int(width), int(height)],
-                [int(0.67 * width), int(height)],
-            ],
-            dtype=np.int32,
-        ),
-    ]
-
-    cv2.drawContours(img, contours, -1, sub_color, 2)
-    return contours
-
