@@ -5,18 +5,13 @@ import cv2
 
 def get_edges(image):
     """
-    Returns dilated image of edges
+    Returns image of edges
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     lower_thresh = 75
     upper_thresh = 200
     edged = cv2.Canny(gray, lower_thresh, upper_thresh)
-
-    # Dilate Image (to connect loose ends) and get contours
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    edged = cv2.dilate(edged, kernel)
-
     return edged
 
 
@@ -51,6 +46,15 @@ def get_quadrilateral_contour(edged_image):
             return approximage_contour
     return None
 
+
+def get_center_point_of_contour(contour):
+    M = cv2.moments(contour)
+    cX = int(M["m10"] / M["m00"])
+    cY = int(M["m01"] / M["m00"])
+    return (cX, cY)
+
+def is_point_in_contour(point, contour):
+    return cv2.pointPolygonTest(contour, point, False) == 1.0
 
 def get_contours_of_color(image, lower_color, upper_color):
     """
@@ -167,8 +171,5 @@ def draw_grid(img, parts=3, color=(0, 255, 0), sub_color=(255, 0, 0)):
     ]
 
     cv2.drawContours(img, contours, -1, sub_color, 2)
-    # cv2.imshow("lined", img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     return contours
 

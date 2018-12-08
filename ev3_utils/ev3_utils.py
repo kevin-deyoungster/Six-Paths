@@ -1,8 +1,8 @@
 """This module contains SSH methods on the EV3"""
 
+import os
 import paramiko
 import stat
-import os
 
 
 def send_map_and_run(
@@ -24,14 +24,14 @@ def send_map_and_run(
 
     # Send map and navigator file to EV3
     sftp = ssh.open_sftp()
-    # sftp.put(map_file, map_file)
+    sftp.put(map_file, map_file)
     sftp.put(navigator_file, navigator_file)
     print("Map and Navigator sent to EV3")
 
     # Run the navigator file
-    # commandstring = f"python3 {navigator_file}"
-    # ssh.exec_command(commandstring)
-    # print(f"Running Navigator {navigator_file}")
+    commandstring = f"python3 {navigator_file}"
+    ssh.exec_command(commandstring)
+    print(f"Running Navigator {navigator_file}")
 
 
 send_map_and_run(

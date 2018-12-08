@@ -9,15 +9,15 @@ directions = ["east", "south", "west", "north"]
 # 3 (corresponding to north)
 # Throws an exception if pos2 is not adjacent to pos1
 
-from ev3dev.ev3 import *
+# from ev3dev.ev3 import *
 from math import *
 from planning_map import *
 
 cellLength = 50
 
-rightMotor = LargeMotor("outB")
-leftMotor = LargeMotor("outA")
-button = Button()
+# rightMotor = LargeMotor("outB")
+# leftMotor = LargeMotor("outA")
+# button = Button()
 
 
 def Straight():
@@ -159,6 +159,7 @@ def WaveFrontAlgo(raw_world_map, start, goal):
 
 
 def WaveExec(world_map, start, goal):
+    print(start, goal, world_map)
     Alist = []
     current = start
     appended = 0
@@ -181,7 +182,6 @@ def WaveExec(world_map, start, goal):
                 appended = 1
             else:
                 appended = 0
-
     print("The list of approved coordinates are ", Alist)
     print()
     return Alist
@@ -258,3 +258,28 @@ if __name__ == "__main__":
     print("Gotten Path, moving!")
     followPath(testStartPos, testStartOrientation, path)
 
+
+# Old Code
+def send():
+    remote_file = "planning_map.py"
+
+    srv = pysftp.Connection(host="192.168.0.1", username="robot", password="maker")
+
+    # Download the file from the remote server
+    srv.put(remote_file)
+
+    # Closes the connection
+    srv.close()
+
+
+def run():
+    ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
+    ssh.connect("192.168.0.1", username="robot", password="maker")
+
+    commandstring = "python3 movement.py"
+    ssh.exec_command(commandstring)
+
+
+send()
+run()

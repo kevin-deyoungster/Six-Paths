@@ -1,4 +1,3 @@
-import imutils
 import cv2
 import os
 import stat
@@ -48,8 +47,8 @@ def get_locations(img, object_cnts, grid_cell_cnts):
     return locations
 
 
-def generate_sparse_grid():
-    return [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+def create_new_grid(row,col):
+    return np.zeros([row,col])
 
 
 def set_grid_values(locations, value, grid):
