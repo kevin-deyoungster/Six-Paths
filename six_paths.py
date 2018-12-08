@@ -55,22 +55,21 @@ def getGrid(image_file):
         blue_contour = cv_utils.get_contours_of_color(image, BLUE_LOWER, BLUE_UPPER)
         black_contour = cv_utils.get_contours_of_color(image, BLACK_LOWER, BLACK_UPPER)
 
+        # Get contours of grid cells
         grid_cell_cnts = cv_utils.draw_grid(image, 3, COLOR_WHITE, COLOR_WHITE)
 
-        start_location = grid_utils.get_locations(image, blue_contour, grid_cell_cnts)
-        goal_location = grid_utils.get_locations(image, red_contour, grid_cell_cnts)
-        obstacles_locations = grid_utils.get_locations(
+        start = grid_utils.get_locations(image, blue_contour, grid_cell_cnts)[0] if len(blue_contour) > 0 else None
+        goal = grid_utils.get_locations(image, red_contour, grid_cell_cnts)[0] if len(red_contour) > 0 else None
+        obstacles = grid_utils.get_locations(
             image, black_contour, grid_cell_cnts
-        )
+        ) if len(black_contour) > 0 else None
 
-        # grid_utils.set_grid_values(start_location, 100, empty_world)
-        # grid_utils.set_grid_values(goal_location, 2, empty_world)
-        grid_utils.set_grid_values(obstacles_locations, 1, empty_world)
+        grid_utils.set_grid_values(obstacles, 1, empty_world)
 
-        print(f"Goal is in location {goal_location}")
-        print(f"Start is in location {start_location}")
+        print(f"Goal is in {goal}")
+        print(f"Start is in {start}")
         print(
-            f"{len(obstacles_locations)} Obstacles are in locations {obstacles_locations}"
+            f"{len(obstacles)} Obstacles are in {obstacles}"
         )
 
         cv2.drawContours(image, red_contour, -1, COLOR_RED, 2)
