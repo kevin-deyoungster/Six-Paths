@@ -5,7 +5,7 @@ import cv2
 
 def get_edges(image):
     """
-    Returns image of edges
+    Performs edge detection on image and returns thresholded result
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -17,7 +17,7 @@ def get_edges(image):
 
 def _get_contours(edged_image):
     """
-    Returns contours in edged_image
+    Returns all contours in edged_image
     """
     cnts = cv2.findContours(edged_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
@@ -44,6 +44,7 @@ def get_quadrilateral_contour(edged_image):
 
         if len(approximage_contour) == 4:
             return approximage_contour
+
     return None
 
 
@@ -53,12 +54,14 @@ def get_center_point_of_contour(contour):
     cY = int(M["m01"] / M["m00"])
     return (cY, cX)
 
+
 def is_point_in_contour(point, contour):
     return cv2.pointPolygonTest(contour, point, False) == 1.0
 
+
 def get_contours_of_color(image, lower_color, upper_color):
     """
-    Returns contours of [color]
+    Returns contours of all objects with color within range [lower_color, upper_color]
     """
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, np.array(lower_color), np.array(upper_color))

@@ -49,11 +49,11 @@ def get_grid(image_file):
 
     # Draw contour of the identified quadrilateral
     cv2.drawContours(image, [quad_contour], -1, COLOR_GREEN, 2)
-    # cv2.imshow("Identified Field", image)
+    cv2.imshow("Identified Field", image)
 
     # Perform Perspective Transform to create top-down-view
     top_down_image = four_point_transform(image, quad_contour.reshape(4, 2))
-    # cv2.imshow("Top-Down View", top_down_image)
+    cv2.imshow("Top-Down View", top_down_image)
 
     # Top Down Image is now the current working image
     image = top_down_image
@@ -65,31 +65,16 @@ def get_grid(image_file):
 
     # Get contours of grid cells
     v_lines, h_lines = grid_utils.get_lines(3, 3, image)
-    grid_cells_cnts, grid_cell_coords = grid_utils.get_cell_contours_and_coords(
-        3, 3, image
-    )
     grid_utils.draw_grid(image, h_lines, v_lines)
 
     start_location = (
-        grid_utils.get_locations(
-            image, blue_contour, grid_cells_cnts, grid_cell_coords
-        )[0]
-        if blue_contour
-        else None
+        grid_utils.get_locations(image, blue_contour)[0] if blue_contour else None
     )
     goal_location = (
-        grid_utils.get_locations(image, red_contour, grid_cells_cnts, grid_cell_coords)[
-            0
-        ]
-        if red_contour
-        else None
+        grid_utils.get_locations(image, red_contour)[0] if red_contour else None
     )
     obstacles = (
-        grid_utils.get_locations(
-            image, black_contour, grid_cells_cnts, grid_cell_coords
-        )
-        if black_contour
-        else None
+        grid_utils.get_locations(image, black_contour) if black_contour else None
     )
 
     print(f"Goal is in {goal_location}")
@@ -112,7 +97,7 @@ def get_grid(image_file):
 
 
 IMAGES = Path("images").glob("**/*.JPG")
-# IMAGES = ["images/IMG_3957.JPG"]
+
 for test_image in IMAGES:
 
     world_map, start, goal = get_grid(str(test_image))
