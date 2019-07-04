@@ -3,7 +3,7 @@ import stat
 import numpy as np
 from math import floor
 import cv2
-from libs import cv_utils
+from lib import cv_utils
 
 
 def create_new_grid(row, col):

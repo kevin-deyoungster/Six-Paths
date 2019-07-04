@@ -1,4 +1,6 @@
-"""This module contains SSH methods on the EV3"""
+"""
+This module contains SSH methods on the EV3
+"""
 
 import os
 import paramiko

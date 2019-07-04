@@ -2,7 +2,7 @@
 
 import CoDrone
 from threading import Thread
-from camera.cam import *
+from drone_utils.camera.cam import *
 from time import *
 
 drone = CoDrone.CoDrone()

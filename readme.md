@@ -1,45 +1,46 @@
-Authors:
-**Kevin de Youngster**, **Kofi Anamoa Mensah**, **David Edem Duamekpor**, **Kwamina Amoako**
+# Six-Paths
+Six-paths was my group project for Robotics class. The project intended to build a multi-robot navigation system where an aerial robot (CoDrone) worked hand-in-hand with a ground robot (Lego EV3) to 'rescue' a target.
 
-# Install Instructions
+The drone captures image feed through its camera and then sends to the central server for image processing and object recognition. The resultant map and navigation information is then given to the Lego EV3 to help it navigate a field (with obstacles) and find the target.
 
-1. To install dependencies, run:
 
-```
-pip install -r requirements.txt
-```
+## Installation
+run `pip3 install -r requirements.txt`
 
-2. To test run:
+## Run 
+Run the program with `python3 six-paths.py`  
+It runs the procedure on test image files in the `images` folder. 
 
-```
-python six-paths.py
-```
+## Process
+![Screen1-Edge Detection](demo/demo1.png)
+![Screen2-Perspective Transform](demo/demo2.png)
+![Screen3-Worldmap](demo/demo3.png)
+![Screen4-Wavefront](demo/demo4.png)
 
-# External Tools Used
 
--   Python 3.7
--   @alieldinayman's [HSV Color Picker Tool](https://github.com/alieldinayman/HSV-Color-Picker) to extract the necessary color ranges of objects
 
-# Project Info
-
-## What Worked?
-
--   Processing image from drone camera into 2D grid map
--   Sending map to EV3
-
-## What did not Work?
-
--   Making drone fly while taking images
-    Blob detection does not get the target objects
-
-### Links to Tutorial and Articles Used
-
--   [Connecting edges from canny edge with dilation](https://stackoverflow.com/questions/43009923/how-to-complete-close-a-contour-in-python-opencv)
--   [Detect Colors](http://answers.opewhancv.org/question/90047/detecting-blue-color-in-this-image/)
--   [Color Filter](https://pythonprogramming.net/color-filter-python-opencv-tutorial/)
--   [OpenCV uses different system for representing HSV](https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv)
+## References and Tools
 -   [Color Filtering](https://stackoverflow.com/questions/47483951/how-to-define-a-threshold-value-to-detect-only-green-colour-objects-in-an-image)
--   [Noise Removal](https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python)
+-   [HSV Color Picker Tool](https://github.com/alieldinayman/HSV-Color-Picker) 
 -   [Drawing Lines in OpenCV](https://stackoverflow.com/questions/44816682/drawing-grid-lines-across-the-image-uisng-openccv-python?rq=1)
--   [Check if point in in something](https://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html?highlight=pointpolygontest#pointpolygontest)
--   [Center of Contour](https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/)
+-   [Finding the center of Contour](https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/)
+-    [OpenCV uses different system for representing HSV](https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv)
+-   [Connecting edges from canny edge with dilation](https://stackoverflow.com/questions/43009923/how-to-complete-close-a-contour-in-python-opencv)
+
+
+## Authors
+- Kevin de Youngster
+- Kofi Anamoa Mensah
+- David Edem Duamekpor
+- Kwamina Amoako
+
+## Results
+### What Worked?
+- Capturing image feed from drone camera
+- Processing image from drone camera into 2D grid map
+- Object recognition with color filtering
+- Sending map to EV3 via ssh
+- EV3 navigating the field
+
+### What did not Work?
+- Concurrently taking image feed from drone (while flying) and navigating the EV3 ground robot.

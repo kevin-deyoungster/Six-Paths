@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Wavefront Movement Algorithm
+"""
 
 # Names of cardinal directions corresponding to the integers 0, 1, 2, and 3
 directions = ["east", "south", "west", "north"]
@@ -9,7 +12,7 @@ directions = ["east", "south", "west", "north"]
 # 3 (corresponding to north)
 # Throws an exception if pos2 is not adjacent to pos1
 
-# from ev3dev.ev3 import *
+from ev3dev.ev3 import *
 from math import *
 from planning_map import *
 

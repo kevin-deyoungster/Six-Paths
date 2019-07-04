@@ -7,9 +7,9 @@ Kevin de Youngster + Kofi Anamoa + Kwamina Amoako + David Duamekpor
 from pathlib import Path
 import cv2
 import numpy as np
-from libs import grid_utils
-from libs import cv_utils
-from libs.p_transform import four_point_transform
+from lib import grid_utils
+from lib import cv_utils
+from lib.p_transform import four_point_transform
 
 BLUE_LOWER = [102, 120, -15]
 BLUE_UPPER = [128, 204, 121]
